@@ -38,6 +38,8 @@ export const signUpUseCase =
           id: userId,
           username: input.username,
           password: input.password,
+          role: 'vendor',
+          subscription_plan: 'basic',
         });
 
         const { cookie, session } =

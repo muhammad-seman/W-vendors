@@ -53,7 +53,7 @@ export async function signUp(formData: FormData) {
         };
       }
 
-      cookies().set(
+      (await cookies()).set(
         sessionCookie.name,
         sessionCookie.value,
         sessionCookie.attributes
@@ -94,7 +94,7 @@ export async function signIn(formData: FormData) {
         };
       }
 
-      cookies().set(
+      (await cookies()).set(
         sessionCookie.name,
         sessionCookie.value,
         sessionCookie.attributes
@@ -111,7 +111,7 @@ export async function signOut() {
     'signOut',
     { recordResponse: true },
     async () => {
-      const cookiesStore = cookies();
+      const cookiesStore = await cookies();
       const sessionId = cookiesStore.get(SESSION_COOKIE)?.value;
 
       let blankCookie: Cookie;
@@ -130,7 +130,7 @@ export async function signOut() {
         throw err;
       }
 
-      cookies().set(
+      (await cookies()).set(
         blankCookie.name,
         blankCookie.value,
         blankCookie.attributes

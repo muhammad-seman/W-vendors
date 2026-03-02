@@ -3,81 +3,106 @@ import { ITransactionManagerService } from '@/src/application/services/transacti
 import { IInstrumentationService } from '@/src/application/services/instrumentation.service.interface';
 import { ICrashReporterService } from '@/src/application/services/crash-reporter.service.interface';
 
-import { ITodosRepository } from '@/src/application/repositories/todos.repository.interface';
 import { IUsersRepository } from '@/src/application/repositories/users.repository.interface';
+import { IProductsRepository } from '@/src/application/repositories/products.repository.interface';
 
-import { ICreateTodoUseCase } from '@/src/application/use-cases/todos/create-todo.use-case';
-import { IDeleteTodoUseCase } from '@/src/application/use-cases/todos/delete-todo.use-case';
-import { IGetTodosForUserUseCase } from '@/src/application/use-cases/todos/get-todos-for-user.use-case';
-import { IToggleTodoUseCase } from '@/src/application/use-cases/todos/toggle-todo.use-case';
 import { ISignInUseCase } from '@/src/application/use-cases/auth/sign-in.use-case';
 import { ISignUpUseCase } from '@/src/application/use-cases/auth/sign-up.use-case';
 import { ISignOutUseCase } from '@/src/application/use-cases/auth/sign-out.use-case';
+import { IGetUsersUseCase } from '@/src/application/use-cases/users/get-users.use-case';
+import { ICreateUserUseCase } from '@/src/application/use-cases/users/create-user.use-case';
+import { IUpdateUserUseCase } from '@/src/application/use-cases/users/update-user.use-case';
+import { IDeleteUserUseCase } from '@/src/application/use-cases/users/delete-user.use-case';
+import {
+  IGetProductsUseCase, IGetProductUseCase, ICreateProductUseCase, IUpdateProductUseCase,
+  IDeleteProductUseCase, IAddProductPhotoUseCase, IDeleteProductPhotoUseCase, IUpdateProductPhotoUseCase,
+} from '@/src/application/use-cases/products/products.use-cases';
 
 import { ISignInController } from '@/src/interface-adapters/controllers/auth/sign-in.controller';
 import { ISignOutController } from '@/src/interface-adapters/controllers/auth/sign-out.controller';
 import { ISignUpController } from '@/src/interface-adapters/controllers/auth/sign-up.controller';
-import { IBulkUpdateController } from '@/src/interface-adapters/controllers/todos/bulk-update.controller';
-import { ICreateTodoController } from '@/src/interface-adapters/controllers/todos/create-todo.controller';
-import { IGetTodosForUserController } from '@/src/interface-adapters/controllers/todos/get-todos-for-user.controller';
-import { IToggleTodoController } from '@/src/interface-adapters/controllers/todos/toggle-todo.controller';
+import { IGetUsersController } from '@/src/interface-adapters/controllers/users/get-users.controller';
+import { ICreateUserController } from '@/src/interface-adapters/controllers/users/create-user.controller';
+import { IUpdateUserController } from '@/src/interface-adapters/controllers/users/update-user.controller';
+import { IDeleteUserController } from '@/src/interface-adapters/controllers/users/delete-user.controller';
 
 export const DI_SYMBOLS = {
   // Services
-  IAuthenticationService: Symbol.for('IAuthenticationService'),
+  IAuthenticationService:    Symbol.for('IAuthenticationService'),
   ITransactionManagerService: Symbol.for('ITransactionManagerService'),
-  IInstrumentationService: Symbol.for('IInstrumentationService'),
-  ICrashReporterService: Symbol.for('ICrashReporterService'),
+  IInstrumentationService:   Symbol.for('IInstrumentationService'),
+  ICrashReporterService:     Symbol.for('ICrashReporterService'),
 
   // Repositories
-  ITodosRepository: Symbol.for('ITodosRepository'),
-  IUsersRepository: Symbol.for('IUsersRepository'),
+  IUsersRepository:    Symbol.for('IUsersRepository'),
+  IProductsRepository: Symbol.for('IProductsRepository'),
 
-  // Use Cases
-  ICreateTodoUseCase: Symbol.for('ICreateTodoUseCase'),
-  IDeleteTodoUseCase: Symbol.for('IDeleteTodoUseCase'),
-  IGetTodosForUserUseCase: Symbol.for('IGetTodosForUserUseCase'),
-  IToggleTodoUseCase: Symbol.for('IToggleTodoUseCase'),
-  ISignInUseCase: Symbol.for('ISignInUseCase'),
+  // Auth use cases
+  ISignInUseCase:  Symbol.for('ISignInUseCase'),
   ISignOutUseCase: Symbol.for('ISignOutUseCase'),
-  ISignUpUseCase: Symbol.for('ISignUpUseCase'),
+  ISignUpUseCase:  Symbol.for('ISignUpUseCase'),
 
-  // Controllers
-  ISignInController: Symbol.for('ISignInController'),
+  // Users use cases
+  IGetUsersUseCase:    Symbol.for('IGetUsersUseCase'),
+  ICreateUserUseCase:  Symbol.for('ICreateUserUseCase'),
+  IUpdateUserUseCase:  Symbol.for('IUpdateUserUseCase'),
+  IDeleteUserUseCase:  Symbol.for('IDeleteUserUseCase'),
+
+  // Products use cases
+  IGetProductsUseCase:        Symbol.for('IGetProductsUseCase'),
+  IGetProductUseCase:         Symbol.for('IGetProductUseCase'),
+  ICreateProductUseCase:      Symbol.for('ICreateProductUseCase'),
+  IUpdateProductUseCase:      Symbol.for('IUpdateProductUseCase'),
+  IDeleteProductUseCase:      Symbol.for('IDeleteProductUseCase'),
+  IAddProductPhotoUseCase:    Symbol.for('IAddProductPhotoUseCase'),
+  IDeleteProductPhotoUseCase: Symbol.for('IDeleteProductPhotoUseCase'),
+  IUpdateProductPhotoUseCase: Symbol.for('IUpdateProductPhotoUseCase'),
+
+  // Auth controllers
+  ISignInController:  Symbol.for('ISignInController'),
   ISignOutController: Symbol.for('ISignOutController'),
-  ISignUpController: Symbol.for('ISignUpController'),
-  IBulkUpdateController: Symbol.for('IBulkUpdateController'),
-  ICreateTodoController: Symbol.for('ICreateTodoController'),
-  IGetTodosForUserController: Symbol.for('IGetTodosForUserController'),
-  IToggleTodoController: Symbol.for('IToggleTodoController'),
+  ISignUpController:  Symbol.for('ISignUpController'),
+
+  // Users controllers
+  IGetUsersController:    Symbol.for('IGetUsersController'),
+  ICreateUserController:  Symbol.for('ICreateUserController'),
+  IUpdateUserController:  Symbol.for('IUpdateUserController'),
+  IDeleteUserController:  Symbol.for('IDeleteUserController'),
 };
 
 export interface DI_RETURN_TYPES {
-  // Services
-  IAuthenticationService: IAuthenticationService;
+  IAuthenticationService:    IAuthenticationService;
   ITransactionManagerService: ITransactionManagerService;
-  IInstrumentationService: IInstrumentationService;
-  ICrashReporterService: ICrashReporterService;
+  IInstrumentationService:   IInstrumentationService;
+  ICrashReporterService:     ICrashReporterService;
 
-  // Repositories
-  ITodosRepository: ITodosRepository;
-  IUsersRepository: IUsersRepository;
+  IUsersRepository:    IUsersRepository;
+  IProductsRepository: IProductsRepository;
 
-  // Use Cases
-  ICreateTodoUseCase: ICreateTodoUseCase;
-  IDeleteTodoUseCase: IDeleteTodoUseCase;
-  IGetTodosForUserUseCase: IGetTodosForUserUseCase;
-  IToggleTodoUseCase: IToggleTodoUseCase;
-  ISignInUseCase: ISignInUseCase;
+  ISignInUseCase:  ISignInUseCase;
   ISignOutUseCase: ISignOutUseCase;
-  ISignUpUseCase: ISignUpUseCase;
+  ISignUpUseCase:  ISignUpUseCase;
 
-  // Controllers
-  ISignInController: ISignInController;
+  IGetUsersUseCase:    IGetUsersUseCase;
+  ICreateUserUseCase:  ICreateUserUseCase;
+  IUpdateUserUseCase:  IUpdateUserUseCase;
+  IDeleteUserUseCase:  IDeleteUserUseCase;
+
+  IGetProductsUseCase:        IGetProductsUseCase;
+  IGetProductUseCase:         IGetProductUseCase;
+  ICreateProductUseCase:      ICreateProductUseCase;
+  IUpdateProductUseCase:      IUpdateProductUseCase;
+  IDeleteProductUseCase:      IDeleteProductUseCase;
+  IAddProductPhotoUseCase:    IAddProductPhotoUseCase;
+  IDeleteProductPhotoUseCase: IDeleteProductPhotoUseCase;
+  IUpdateProductPhotoUseCase: IUpdateProductPhotoUseCase;
+
+  ISignInController:  ISignInController;
   ISignOutController: ISignOutController;
-  ISignUpController: ISignUpController;
-  IBulkUpdateController: IBulkUpdateController;
-  ICreateTodoController: ICreateTodoController;
-  IGetTodosForUserController: IGetTodosForUserController;
-  IToggleTodoController: IToggleTodoController;
+  ISignUpController:  ISignUpController;
+
+  IGetUsersController:    IGetUsersController;
+  ICreateUserController:  ICreateUserController;
+  IUpdateUserController:  IUpdateUserController;
+  IDeleteUserController:  IDeleteUserController;
 }

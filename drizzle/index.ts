@@ -1,30 +1,46 @@
-import { createClient, ResultSet } from '@libsql/client';
-import { DrizzleSQLiteAdapter } from '@lucia-auth/adapter-drizzle';
+import mysql from 'mysql2/promise';
+import { DrizzleMySQLAdapter } from '@lucia-auth/adapter-drizzle';
 import { ExtractTablesWithRelations } from 'drizzle-orm';
-import { drizzle } from 'drizzle-orm/libsql';
-import { SQLiteTransaction } from 'drizzle-orm/sqlite-core';
+import { drizzle } from 'drizzle-orm/mysql2';
+import { MySqlTransaction } from 'drizzle-orm/mysql-core';
 
-import { sessions, todos, users } from './schema';
+import * as schema from './schema';
 
-// Setup sqlite database connection
-const client = createClient({
-  url: process.env.DATABASE_URL ?? 'file:sqlite.db',
-  authToken: process.env.DATABASE_AUTH_TOKEN,
+const globalForDb = globalThis as unknown as {
+  db: any;
+  pool: mysql.Pool | undefined;
+};
+
+const poolConnection = globalForDb.pool ?? mysql.createPool({
+  uri: process.env.DATABASE_URL!,
+  connectionLimit: 10,
+  maxIdle: 10,
+  idleTimeout: 60000,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0,
 });
-export const db = drizzle(client, { schema: { users, sessions, todos } });
+
+export const db = globalForDb.db ?? drizzle(poolConnection, { schema, mode: 'default' });
+
+if (process.env.NODE_ENV !== 'production') {
+  globalForDb.pool = poolConnection;
+  globalForDb.db = db;
+}
 
 // Setup lucia adapter
-export const luciaAdapter = new DrizzleSQLiteAdapter(db, sessions, users);
+export const luciaAdapter = new DrizzleMySQLAdapter(db, schema.sessions, schema.users);
 
 // Export Transaction type to be used in repositories
 type Schema = {
-  users: typeof users;
-  sessions: typeof sessions;
-  todos: typeof todos;
+  users: typeof schema.users;
+  sessions: typeof schema.sessions;
+  categories: typeof schema.categories;
+  products: typeof schema.products;
+  product_photos: typeof schema.product_photos;
 };
-export type Transaction = SQLiteTransaction<
-  'async',
-  ResultSet,
+export type Transaction = MySqlTransaction<
+  any,
+  any,
   Schema,
   ExtractTablesWithRelations<Schema>
 >;

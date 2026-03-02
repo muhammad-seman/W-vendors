@@ -1,6 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server';
 
-import { getInjection } from '@/di/container';
 import { SESSION_COOKIE } from '@/config';
 
 export async function middleware(request: NextRequest) {
@@ -11,12 +10,6 @@ export async function middleware(request: NextRequest) {
   if (!isAuthPath) {
     const sessionId = request.cookies.get(SESSION_COOKIE)?.value;
     if (!sessionId) {
-      return NextResponse.redirect(new URL('/sign-in', request.url));
-    }
-    try {
-      const authenticationService = getInjection('IAuthenticationService');
-      await authenticationService.validateSession(sessionId);
-    } catch (err) {
       return NextResponse.redirect(new URL('/sign-in', request.url));
     }
   }

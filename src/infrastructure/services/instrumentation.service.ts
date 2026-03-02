@@ -1,5 +1,3 @@
-import * as Sentry from '@sentry/nextjs';
-
 import { IInstrumentationService } from '@/src/application/services/instrumentation.service.interface';
 
 export class InstrumentationService implements IInstrumentationService {
@@ -7,14 +5,16 @@ export class InstrumentationService implements IInstrumentationService {
     options: { name: string; op?: string; attributes?: Record<string, any> },
     callback: () => T
   ): T {
-    return Sentry.startSpan(options, callback);
+    // Mock span execution since Sentry is removed
+    return callback();
   }
 
-  instrumentServerAction<T>(
+  async instrumentServerAction<T>(
     name: string,
     options: Record<string, any>,
     callback: () => T
   ): Promise<T> {
-    return Sentry.withServerActionInstrumentation(name, options, callback);
+    // Mock server action instrumentation since Sentry is removed
+    return await callback();
   }
 }
